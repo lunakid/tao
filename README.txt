@@ -14,7 +14,7 @@ them.
 Also, apart from being maximally *easy-to-use*, requirements as *easy hosting* and
 *light maintenance/support burden* for such a tool are mandatory to be practical. 
 (While Redmine is great, not everyone can host a RoR server stack. While ASANA is 
-powerful (thoughits data model and functionality are severely lacking), again, you 
+powerful (though its data model and functionality are severely lacking), again, you 
 can't run it yourself. Etc.) 
 
 Please, if you know activity management tools with a broad enough scope, maximum 

@@ -1,1 +1,1 @@
-<script> location='src/' </script>
+<script> location='test/' </script>

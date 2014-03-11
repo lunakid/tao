@@ -1,1 +1,1 @@
-<?php include "../src/index.php" ?>
+<?php include "../test/index.php" ?>

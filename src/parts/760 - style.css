@@ -1,0 +1,107 @@
+body {
+	font-size: 10pt;
+	margin: 1em 3em;
+}
+h4 {	margin-bottom: 0.5ex; }
+td {
+	font-size: 10pt;
+	vertical-align: top;	
+	padding: 1ex;
+}
+td.sidebar {
+	width: 20%; 
+	border-left: 1px solid black; 
+}
+input {	font-size: 9pt; }
+ul.menu {
+	list-style-type: none;
+	margin-left: 0;
+}
+li.menu {
+	width: 95%;
+	background: #e0e0e0;
+	margin: 2px;
+	padding: 2px;
+}
+.entry {
+	font-size: 8pt;
+	margin:0; 
+	padding:0;
+}
+.selected { 
+/*!!DEBUG:*/
+	background: red;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+.entrysubj {
+	font-size: 8pt;
+	margin:0; 
+	padding: 1px 2px;
+	width: 70%;
+}
+table.entry {
+	width:100%; 
+	border: 1px solid black;
+}
+td.entry-id {
+	font-size: 8pt;
+	margin: 0; 
+	padding: 0;
+	width: 5ex;
+	text-align: center;
+	vertical-align: middle;
+}
+td.entry-data {
+	font-size: 8pt;
+	margin:0; 
+	padding:0;
+	border-left: 1px solid black;
+}
+form.entry {
+	width:100%;
+}
+input.entrybutton {
+	font-size: 6pt;
+}
+input.entry-setstate {
+	background: #bcccc0;
+	font-size: 6pt;
+	margin:0;
+	padding:0;
+}
+table.bottomline {
+	background: #e0e0e0;
+	width: 100%; /* same as table.entry */
+	border: 1px solid black;
+	margin:0;
+}
+td.bottomline {
+	margin:0;
+	padding:0 1ex 0 1ex;
+	font-size: 8pt; /* Mozilla requires this here, not in 'table' */
+	text-align: center;
+}
+input.setstate {
+	background: #bcccc0;
+}
+td.entry-attrnam { width: 30%; }
+input.entry-attrval { width: 100%; }
+textarea.entry-attrval { width: 100%; }
+input.entry-new { width: 70%; }
+
+div.toolbar {
+	width: 100%;
+}
+form.toolbar-mode {
+	display: inline-block;
+}
+form[name=add_new] {
+	display: inline-block;
+	width: 100%;
+}
+form[name=add_new].toolbar-mode {
+	width: 70%;
+}
+form[name=context_filter] {
+}

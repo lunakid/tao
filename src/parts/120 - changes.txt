@@ -1,0 +1,108 @@
+TODO:
+	! Deleting an item from the details page should go back to the list!
+
+HISTORY:
+
+  0.287 - 2014-03-11
+	- Change history is now tracked by the change database under 
+	  tao/changes (and in the GIT commit history).
+	- Added a simplistic build (= glue) srcipt (and phase...).
+	- Fixed self URL.
+	- Several small refactoring and minor UI changes.
+
+  0.286 - 2014-03-11
+	- Fix explicit DB change by (GET) request.
+	- Added some padding to the subject lines in the list.
+	- Embedded the form observer javascript to avoid loosing data on a 
+	  mistaken submit due to the script not having been loaded for any 
+	  reason.
+	- Added err() calls instead of echos.
+
+  0.285 - 2014-03-10
+	- Added check to skip file_get_contents() if no 'title'.
+	- Removed '&' before 2 file_get_contents() calls.
+	- Renamed print_logo to print_banner.
+	- Added date_default_timezone_set() to silence warnings from PHP 5.1 up.
+	- Not using short PHP tag now.
+	- Added error_reporting(E_ALL).
+	- set_magic_quotes_runtime() is only called if supported.
+	- Renamed 'cache_syncwrite' to 'cache_writethrough'
+	- Fixed 'get property of non-object' errors (line 265/266).
+	- Minor styling of the issue list. (Body margins added, ID field widened.)
+	- Using <script> location=... redirecting, as header(loc.) does nothing
+	  for some reason (perhaps only on Node.js?)
+	- Added DOCTYPE "html" (which means HTML5 now).
+	- Added jQuery 1.11.1 (via Google CDN).
+	- Added JS doubleclick-open to issues summary lines.
+	- Renamed "iteration" to "phase" to be more straightforward to a wider
+	  audience.
+	- Fixed Notice: Undefined variable: newstate_label on line 666
+	- Changed label "Cancelled" to "Deleted" in the test DB (now being consistent
+	  with the button labels, and also with the context dir names...).
+	- Added Esc-close to the details page. (No check for changes yet! :-o )
+	- Add check for changes and prevent Esc-close on the details page.
+	- Added http://code.google.com/p/jquery-form-observe/ for form input 
+	  change tracking.
+	- Add CREATED timestamp to new items.
+
+  0.284-pre2
+
+	- Added lots of missing isset()s.
+
+	- Upgraded to use file_get_contents (requires PHP 4.3.0!)
+
+	  *** The effect of the now missing unmagicquote() call ***
+	  *** is UNCHECKED yet!                                 ***
+
+  	PENDING:
+  	
+  	- See: http://project/todo/current/changes/
+
+	- Caching problem (seems to be IE-related):
+
+		1. The body of most recently added item STILL missing 
+		   from the "Details" page till a couple of seconds / minutes
+
+		2. After adding a new item and then immediately restarting
+		   IE6, the most recently added item is missing from the list.
+		   for a couple of seconds (minutes)?
+		   OTOH, Mozilla does this right.
+
+  0.283
+
+    	This History added.
+  	Merged 0.283 back to the main branch.
+
+  	PENDING:
+
+  	That caching problem:
+
+		1. The body of most recently added item STILL missing 
+		   from the "Details" page till a couple of seconds / minutes
+
+		2. After adding a new item and then immediately restarting
+		   IE6, the most recently added item is missing from the list.
+		   for a couple of seconds (minutes)?
+		   OTOH, Mozilla does this right.
+
+  0.282a
+  
+	1. This version is to isolate the following bug: 
+
+		1. body of most recently added item missing from the
+		details
+
+			--> It gets written, but does not get
+			read back. It does not happen consistently.
+			Supposedly an ODB property caching problem.
+		
+			No, it's a session caching problem! (Timestamp
+			tests revealed this.)
+
+		2. then (after restarting the browser) the whole 
+		most recently added item missing from the list
+
+			--> this part seems to be a simple
+			browser caching problem
+
+	2. Some comments added/fixed.

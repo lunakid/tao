@@ -2,7 +2,7 @@ Tao - Tasks United
 
 Users: 
 
-* Please see [[README.txt]]
+* Please see [README.txt](README.txt)
 
 Tao Developer:
 

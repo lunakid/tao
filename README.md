@@ -1,5 +1,3 @@
-Tao - Tasks United
-
 Users: 
 
 * Please see [README.txt](README.txt)

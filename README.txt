@@ -12,7 +12,7 @@ this domain in a sufficiently general and flexible way, I'm just simply unaware 
 them.
 
 Also, apart from being maximally *easy-to-use*, requirements as *easy hosting* and
-light maintenance/support burden* for such a tool are mandatory to be practical. 
+*light maintenance/support burden* for such a tool are mandatory to be practical. 
 (While Redmine is great, not everyone can host a RoR server stack. While ASANA is 
 powerful (thoughits data model and functionality are severely lacking), again, you 
 can't run it yourself. Etc.) 

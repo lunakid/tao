@@ -1,7 +1,5 @@
 Tao - Tasks United
 
-About
-
 Issues, tasks, projects (and subtasks, subprojects), todo items, support tickets, 
 change requests and all sorts of such elementary particles of work have, historically,
 the respective tools of their kinds for managing them, each implementing everything
@@ -20,9 +18,6 @@ it yourself. Etc.)
 Please, if you know tools like that, with broad scope, maximum flexibility and a
 minimalistic architecture, file an issue on this project at github.com/lunakid/tao/
 
-NOTE: This project here is not a solution, but a framework for experimenting, a
-prototype to demonstrate and shape requirements and techniques for the quest of 
-the Holy Grail of Task Management.
-
-Thanks!
-lunakid
+Note: this project is (obviously) not a solution, but a framework for experimenting, 
+a prototype to demonstrate ideas, shape requirements and techniques, while the quest 
+for the Holy Grail of task management continues.

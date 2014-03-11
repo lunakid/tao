@@ -1,6 +1,6 @@
 Users: 
 
-* Please see [README.txt](README.txt)
+* Please see [README.txt](README.txt).
 
 Tao developers:
 

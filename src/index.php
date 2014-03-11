@@ -125,7 +125,7 @@ $cfg['statedir'] = 'CONTEXT/';
 //!!define('DEFAULT_CONTEXT', FULL_CONTEXT); // Starting point of state transitions...
 
 $cfg['default_context'] = 'DEFAULT'; // Start with these items...
-$cfg['show_footer'] = true;
+$cfg['show_summary'] = true;
 $cfg['timeonze'] = 'Europe/Budapest';
 
 
@@ -138,7 +138,7 @@ define('TITLE_FILE', '.title');
 define('HIGHEST_PRIORITY', 0);
 define('LOWEST_PRIORITY', 255);
 define('DEFAULT_PRIORITY', 50);
-define('SCRIPT_SELF', basename(__FILE__));
+define('SCRIPT_SELF', $_SERVER['PHP_SELF']);
 
 
 class ODB {
@@ -716,9 +716,7 @@ class ChangeSet {
 		}
 	}
 	
-	function show() {
-		$cnt = count($this->entries);
-
+	function show_title() {
 		$title = '';
 		if (is_file($this->current_dir .'/' . '.title'))
 			$title = file_get_contents($this->current_dir . '/' . '.title');
@@ -727,45 +725,60 @@ class ChangeSet {
 				$this->ctxlabel_from_name[$this->current_context]
 				.':';
 		}
-		
 		p("<h4>$title</h4>");
+	}
+
+	function show() {
 
 		// Show the list...
+		$cnt = count($this->entries);
 		for ($i = 0; $i < $cnt; ++$i) {
 			$selected = ($this->entries[$i]->id == $this->focused_id);
 			$this->entries[$i]->show($this, $selected);
 		}
-	
-		if ($this->cfg['show_footer']) {
-			p('<table class="bottomline"><tr>');
-			p("<td class=\"bottomline\">" . count($this->entries) . ' item(s)</td>');
-			p("<td class=\"bottomline\">$this->title</td>");
-			p("<td class=\"bottomline\">Phase: #$this->iteration</td>");
-			p('</tr></table>');
-		}
+	}	
+
+	function show_toolbar() {
+		p('<div class="toolbar">');
+		$this->show_new('TOOLBAR');
+		$this->show_ctx_selector('TOOLBAR');
+		p('</div>');
+	}
+
+	function show_summary() {
+		$cnt = count($this->entries);
+		p('<table class="bottomline"><tr>');
+		p("<td class=\"bottomline\">$cnt item(s)</td>");
+		p("<td class=\"bottomline\">$this->title</td>");
+		p("<td class=\"bottomline\">Phase: #$this->iteration</td>");
+		p('</tr></table>');
 	}
 	
-	function show_new() {
-		// Note: this check may be removed later (adding new items 
-		// in "foreign" contexts may be OK with good GUI backing).
+	function show_new($mode = '') {
+		$css_class = ($mode == 'TOOLBAR' ? 'toolbar-mode' : '');
+		//!! Note: this check should be changed: proper parmission
+		//!! settings should tell if adding new items in a given context
+		//!! is allowed or not!
 		if ($this->current_context == $this->cfg['default_context']) {
 			p('
-<form action="'.$this->nextpage_url().'" method="post" style="width:100%;">
+<form name="add_new" action="'.$this->nextpage_url()."\" class=\"$css_class\"".' method="post">
+<input type="submit" value="Add:">
 <input type="text" name="subject" class="entry-new">
 <input type="hidden" name="context" value="' . $this->current_context . '" />
 <input type="hidden" name="cmd" value="New">
-<input type="submit" value="Add">
 </form>');
 		}
 	}
 	
 	
-	function show_ctx_selector() {
-		p("\n".'<form action="'.$this->nextpage_url().'" method="post">');
+	function show_ctx_selector($mode = '') {
+		$css_class = ($mode == 'TOOLBAR' ? 'toolbar-mode' : '');
+		p("\n<form name=\"context_filter\" class=\"$css_class\" action=\"".$this->nextpage_url().'" method="post">');
 		p('<input type="hidden" name="page" value="list" />');
-		p('<input type="submit" name="cmd" value="Show" />');
-		p('<select name="context" onChange="this.form.submit();">');
+		p('<input type="hidden" name="cmd" value="Show">');
+		p('<input type="submit" value="Show:" />');
 
+		p('<select name="context" onChange="this.form.submit();">');
 		$ctx = $this->current_context;
 		p("<option value=\"$ctx\">" .
 			$this->ctxlabel_from_name[$ctx] .
@@ -778,6 +791,7 @@ class ChangeSet {
 				'</option>');
 		}
 		p('</select>');
+
 		p('</form>');
 	}
 	
@@ -944,7 +958,7 @@ echo "new state: ".$_POST['statechg']." <br>";
 			p('<hr>');
 			details_page_show_close();
 
-			mru_print_entry_page($list->current_context, $output);
+			print_entry_page($list->current_context, $output);
 
 			break;
 	
@@ -954,14 +968,16 @@ echo "new state: ".$_POST['statechg']." <br>";
 			echo "<script> location='$weblink' </script>";
 			exit(0);
 		
-		default: // show the issue list by default
-			$list->show_ctx_selector();
-			$list->show_new();
-			$list->show();
-			$list->show_new();
-			$list->show_ctx_selector();
+		default: // Show the issue list by default
 
-			mru_print_list_page($list, $output);
+			$list->show_title();
+			$list->show_toolbar();
+			$list->cfg['show_summary'] && $list->show_summary();
+			$list->show();
+			$list->cfg['show_summary'] && $list->show_summary();
+			$list->show_toolbar();
+
+			print_list_page($list, $output);
 
 			break;
 	}
@@ -977,7 +993,7 @@ function p($str) {
 	$output .= $str;
 }
 
-function mru_print_list_page($list, &$output) {
+function print_list_page($list, &$output) {
 	global $style;
 	print <<<__END
 <!DOCTYPE html>
@@ -1014,7 +1030,7 @@ __END;
 }
 
 
-function mru_print_entry_page($context, &$output) {
+function print_entry_page($context, &$output) {
 	global $style;
 	print <<<__END
 <!DOCTYPE html>
@@ -1157,6 +1173,23 @@ td.entry-attrnam { width: 30%; }
 input.entry-attrval { width: 100%; }
 textarea.entry-attrval { width: 100%; }
 input.entry-new { width: 70%; }
+
+div.toolbar {
+	width: 100%;
+}
+form.toolbar-mode {
+	display: inline-block;
+}
+form[name=add_new] {
+	display: inline-block;
+	width: 100%;
+}
+form[name=add_new].toolbar-mode {
+	width: 70%;
+}
+form[name=context_filter] {
+}
+
 __END;
 
 //---------------------------------------------------------------------

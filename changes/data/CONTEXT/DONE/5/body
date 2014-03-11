@@ -1,5 +1,5 @@
-This is only meaningful if a task can be ACTIVATED. So, an activation feature is required first.
---
-ACTIVATE has been considered a non-issue (a custom context solves that), so now what does MRU mean? Last "touched" items, whatever has been done to them?
---
-There are two kinds of Activations: one is defined by this tool, as "moving to top in MRU", and the other is totally application-specific and unknown to this tool.
+What should MRU mean? Last opened? Last changed? Last "activated"? 
+
+In this latter case: if "activation" is used "semantically" (as defined by the configuration/DB), then this tool does nothing about that concept at all... 
+
+Perhaps MRU should also be a "void" concept to the app, and the configuration should describe what properties should drive an MRU listing order (there may even be multiple listing orders, and the "MRU" concept may not even apply any more, meaning something more specific, like "order by last-modified time" or "order by 'set to state X' time".

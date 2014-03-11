@@ -1,0 +1,1 @@
+<script> location='src/' </script>

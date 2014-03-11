@@ -1,0 +1,1 @@
+Preferably using customizable state transition rules. (So dependencies can be formally - but trivially - referred to in the config, and can be used to block certain state transitions as needed & configured.)

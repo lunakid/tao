@@ -1,0 +1,10 @@
+2003-05-24 09:50:08 [iteration: 2] CREATED as '1'
+2003-05-24 09:51:12 [iteration: 2] UPDATED
+2003-05-24 09:51:17 [iteration: 2] UPDATED
+2003-05-24 10:13:45 [iteration: 2] UPDATED
+2003-05-24 10:13:53 [iteration: 2] UPDATED
+2003-05-24 10:37:44 [iteration: 2] ACTIVATED
+2003-05-24 10:44:50 [iteration: 2] MOVED: DEFAULT --> DONE
+2003-05-24 10:49:27 [iteration: 2] UPDATED
+2003-05-24 10:49:34 [iteration: 2] MOVED: DONE --> DELETED
+2003-05-24 10:49:59 [iteration: 2] MOVED: DELETED --> .PURGED

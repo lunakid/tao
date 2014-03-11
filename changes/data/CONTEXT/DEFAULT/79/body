@@ -1,0 +1,14 @@
+'split p to x, y' replaces p with x and y, 
+so that p = x + y. [!!? Not allowed when subtasks exist already, because this would change their ownership? Or what to do?]
+
+'refine p with x' adds a new subtask (child) x to p,
+replacing p with p', so that p' + x = p. (Meaning
+that we "specify off" ("carve off") a certain part (x) off the original opaque, unknown body of p so that that part becomes smaller (p') as we add the new structuring knowledge (x) to our original knowledge on p.) It is the responsibility of the caller/operator to 
+make sure that x is disjunct with any other existing
+subtasks [!! NOT SURE THIS REQ. IS NEEDED].
+
+Note: the child tree implies here reflects containment,
+that is used for *categorization*!
+
+Dependency tree (actually not a tree) is independent 
+of the above containment thing! However, of course, containment automatically implies dependency.

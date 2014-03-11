@@ -1,0 +1,1 @@
+In the task listing, the task dependency order should generally be preserved. So (in clients capable of D&D), when the user drags a task upwards, the task being moved must not precede its dependent tasks, but those must be moved upwards too, as necessary, or if they are already all bumped up to the top of the list, then the moved task cannot go any further up itself either.

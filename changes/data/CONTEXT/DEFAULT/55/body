@@ -1,0 +1,3 @@
+Ad-hoc changes can be made to the sources, which don't correspond to any previously documented requests. 
+
+To support documenting these, too, a new change item describing the modifications is simply created in the "Done" context. (It will correctly belong the pending iteration.)

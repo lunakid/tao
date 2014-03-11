@@ -1,0 +1,2 @@
+OK, fixed now: it was just a problem of missing
+attr. get() calls.

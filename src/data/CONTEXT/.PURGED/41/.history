@@ -1,0 +1,18 @@
+2003-05-18 22:20:07 [version]: CREATED
+2003-05-18 22:20:27 [version]: UPDATED: unspecified attribute(s)
+2003-05-18 22:20:31 [version]: MOVED: DEFAULT --> DONE
+2003-05-18 22:20:35 [version]: MOVED: DONE --> DELETED
+2003-05-18 23:06:34 [parent version]: MOVED: DELETED --> DONE
+2003-05-18 23:11:52 [parent version]: MOVED: DONE --> DELETED
+2003-05-18 23:12:00 [parent version]: MOVED: DELETED --> DONE
+2003-05-18 23:25:59 [parent version]: UPDATED: unspecified attribute(s)
+2003-05-18 23:26:02 [parent version]: UPDATED: unspecified attribute(s)
+2003-05-18 23:26:09 [parent version]: MOVED: DONE --> DELETED
+2003-05-18 23:27:37 [parent version]: UPDATED: unspecified attribute(s)
+2003-05-18 23:27:39 [parent version]: UPDATED: unspecified attribute(s)
+2003-05-18 23:54:26 [parent version]: MOVED: DELETED --> DEFAULT
+2003-05-18 23:54:33 [parent version]: MOVED: DEFAULT --> DELETED
+2003-05-19 00:06:34 [parent version]: MOVED: DELETED --> DEFAULT
+2003-05-19 00:06:42 [parent version]: MOVED: DEFAULT --> DONE
+2003-05-19 01:41:31 [parent version]: MOVED: DONE --> DELETED
+2003-05-19 01:42:54 [parent version]: MOVED: DELETED --> .PURGED

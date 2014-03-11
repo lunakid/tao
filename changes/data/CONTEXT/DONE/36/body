@@ -1,0 +1,3 @@
+This would allow one central script managing many data repos. (So upgrading would not be that painful and I can start using this for all projects!...)
+--
+The syntax is: db=/full/path/for/the/moment

@@ -1,0 +1,1 @@
+Add db_root as script param (to allow shared script use)

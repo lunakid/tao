@@ -1,0 +1,10 @@
+%31 [version]: event + event data
+2003-05-18 22:44:54 [parent version]: MOVED: DELETED --> DONE
+2003-05-18 23:27:53 [parent version]: MOVED: DONE --> DELETED
+2003-05-18 23:46:06 [parent version]: MOVED: DELETED --> DEFAULT
+2003-05-18 23:54:11 [parent version]: MOVED: DEFAULT --> DONE
+2003-05-18 23:54:21 [parent version]: MOVED: DONE --> DELETED
+2003-05-19 00:36:07 [parent version]: MOVED: DELETED --> 
+2003-05-19 00:43:29 [parent version]: MOVED: DELETED --> 
+2003-05-19 00:49:03 [parent version]: MOVED: DELETED --> 
+2003-05-19 01:42:53 [parent version]: MOVED: DELETED --> .PURGED

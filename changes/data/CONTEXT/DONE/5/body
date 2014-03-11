@@ -1,0 +1,5 @@
+This is only meaningful if a task can be ACTIVATED. So, an activation feature is required first.
+--
+ACTIVATE has been considered a non-issue (a custom context solves that), so now what does MRU mean? Last "touched" items, whatever has been done to them?
+--
+There are two kinds of Activations: one is defined by this tool, as "moving to top in MRU", and the other is totally application-specific and unknown to this tool.

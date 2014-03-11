@@ -1,0 +1,5 @@
+Not quite possible, unfortunately... :-(
+
+Perhaps the new-window (target="..." stuff) should be dropped and a single-window mode should be favoured instead.
+--
+One more reason to drop the multi-window approach: it is bug-prone to propagate the session (noticed by actually producing such a bug as soon as possible... ;-o )

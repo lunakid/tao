@@ -1,0 +1,3 @@
+The thing is actually not as simple as just adding sort options.
+Sometimes MRU and sometimes importance-order is more relevant. The program should know and select, whichever is better in a current situation (this is called intuitiveness, isn't it?...).
+Also, combined sort keys are to be supported.

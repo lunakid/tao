@@ -1,0 +1,4 @@
+http://doc/cgi-bin/dwww?type=file&location=/usr/share/doc/phpdoc/html/faq.html
+---
+htmlspecialchars(form output) & 
+unmagicquote(form input) were the solution.

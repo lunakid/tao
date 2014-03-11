@@ -1,0 +1,5 @@
+Separate the GUI stuff into, perhaps, descendant classes. 
+
+Only have global stuff around, which is relevant for the specific tool incarnation (like session_start, print_page & friends for PHP).
+
+Stuff shared by tool variants should be in common classes. (Also keep in mind implementing them in a common binary lib.)

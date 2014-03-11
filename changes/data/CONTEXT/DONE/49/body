@@ -1,0 +1,8 @@
+The global product version is always a 
+pending version! When a state change occurs, 
+the logged version actually indicates the
+pending (or next) version of the product.
+
+Make this much better articulated!
+
+(Perhaps by simply calling it "_next_ version".)

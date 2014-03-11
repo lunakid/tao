@@ -1,0 +1,5 @@
+This is because:
+
+- state changes are not currently setting the focus
+
+- open Details + state change takes you back to DEFAULT, which is on a separate page just got out-of-sync! (still a mystery, how DEFAULT[0] got it...)

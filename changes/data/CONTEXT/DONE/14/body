@@ -1,0 +1,5 @@
+The currently dummy [!] button may be used for that.
+---
+This actually does not make sense, as being "active" is just the same as being in an "active" context (or state), so it's just a matter of configuration to handle this.
+---
+A new request is created suggesting an "ACTIVE" state in the default DB.

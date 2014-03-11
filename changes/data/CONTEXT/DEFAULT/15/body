@@ -1,0 +1,2 @@
+True children are locally scoped dependency items that are not even visible from the outside.
+(External dependencies are also to be supported, of course.)

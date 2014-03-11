@@ -1,0 +1,5 @@
+Details window won't open, no operations (form buttons) react, etc...
+
+It would be much better to not use #0 at all for normal items. (Well, but that may introduce *other* annoying problems, I fear...)
+---------
+Actually, eliminating the 0 starting address was trivial (thanks to my smart code... :) ).

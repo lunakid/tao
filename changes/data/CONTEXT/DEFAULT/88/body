@@ -1,0 +1,6 @@
+Is it an IE bug really? Well, after deleting the cached file, the page *does* refresh. Plus, it worked with Opera7.23 and Mozilla 1.6.
+
+Note: neither the IE setting "check page on every visit" helped, nor adding the following HTML META header tags:
+
+<META HTTP-EQUIV="Expires" CONTENT="Fri, 30 Oct 1998 14:19:41 GMT">
+<META HTTP-EQUIV="Cache-Control" CONTENT="must-revalidate, no-cache">

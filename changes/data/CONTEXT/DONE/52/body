@@ -1,0 +1,3 @@
+When it is e.g. deleted, then the current context will have no focused items. If changed to the deleted context, the newly deleted item would be in focus.
+-----------
+(Actually, there was nothing to do: the original focus implementation did just exactly that.)

@@ -1,0 +1,1 @@
+Which state buttons are displayed in a listing depends on the currently selected state. So, the possible target states (plus labels etc.) should be read from state-dependent meta-data files.

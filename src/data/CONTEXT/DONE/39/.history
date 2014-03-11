@@ -1,0 +1,16 @@
+2003-05-18 21:55:26 [version]: event + event data
+2003-05-18 22:44:44 [parent version]: MOVED: DONE --> DELETED
+2003-05-19 00:31:20 [parent version]: MOVED: DELETED --> 
+2003-05-19 00:41:15 [parent version]: MOVED: DELETED --> 
+2003-05-19 00:46:17 [parent version]: MOVED: DELETED --> 
+2003-05-19 01:00:51 [parent version]: MOVED: DELETED --> 
+2003-05-19 01:40:56 [parent version]: MOVED: DELETED --> DEFAULT
+2003-05-19 01:41:00 [parent version]: MOVED: DEFAULT --> DONE
+2003-05-19 01:41:11 [parent version]: UPDATED: unspecified attribute(s)
+2003-05-19 01:41:31 [parent version]: MOVED: DONE --> DELETED
+2003-05-19 01:49:20 [version=UNSPECIFIED]: MOVED: DELETED --> DEFAULT
+2003-05-19 01:50:28 [version=0.01]: MOVED: DEFAULT --> DONE
+2003-05-19 01:55:09 [v=0.01] MOVED: DEFAULT --> DONE
+2003-05-19 01:55:12 [v=0.01] MOVED: DONE --> DELETED
+2003-05-19 01:55:44 [v=0.01] MOVED: DELETED --> DEFAULT
+2003-05-19 01:55:48 [v=0.01] MOVED: DEFAULT --> DONE

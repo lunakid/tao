@@ -1,0 +1,2 @@
+The URL is already loaded with 
+?PHPSESSID= in this case, so we cannot safely add more ?-args, not knowing whether we need to start them with a "?" or not... :-(

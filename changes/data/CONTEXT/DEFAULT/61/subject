@@ -1,0 +1,1 @@
+Fix: focus bug: state-changed tasks sometimes lose focus (and DEFAULT[0] gets it)

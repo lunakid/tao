@@ -1,0 +1,1 @@
+Wrap file_get_contents() calls in load_file()

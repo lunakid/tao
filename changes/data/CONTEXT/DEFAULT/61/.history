@@ -1,6 +1,0 @@
-2003-05-20 23:12:07 [iteration: 24] CREATED as 'Fix: focus bug: STARTed task loses the focus, it goes to DEFAULT:[0]'
-2003-05-20 23:13:47 [iteration: 24] MOVED: DEFAULT --> PENDING
-2003-05-20 23:14:29 [iteration: 24] UPDATED
-2003-05-20 23:27:37 [iteration: 24] MOVED: PENDING --> DELETED
-2003-05-20 23:27:45 [iteration: 24] MOVED: DELETED --> DEFAULT
-2003-05-20 23:32:45 [iteration: 24] UPDATED

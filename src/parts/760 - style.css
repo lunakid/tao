@@ -1,3 +1,6 @@
+* {
+	font-family: Arial;
+}
 body {
 	font-size: 10pt;
 	margin: 1em 3em;
@@ -105,3 +108,12 @@ form[name=add_new].toolbar-mode {
 }
 form[name=context_filter] {
 }
+form[name=export] {
+}
+div.error-message {
+	background: #fff0f0;
+	border: 1px solid #c00000;
+	padding: 4px;
+}
+
+/*Put a CR/LF below here to avoid breaking the build!*/

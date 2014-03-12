@@ -1,3 +1,0 @@
-Fork is the most important. That would eliminate
-the need for keeping track of the dubious "this task is xx% ready" information directly. (Actually, a task is ready, when all of its subtasks are ready. Period.)
-When something is partly done, a forked item can be "carved out" from the original task, reflecting the actual situation.

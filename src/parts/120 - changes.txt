@@ -1,5 +1,13 @@
 TODO:
-	! Deleting an item from the details page should go back to the list!
+	! Deleting an item from the details page should close the details 
+	  page! (Some actions should actually mean something to the tool, 
+	  or these side-effects should be triggered by the app config?)
+
+	! Dblclk-open does not mark the item as being "in focus".
+
+	! Some items have an id attr. file, some don't... (Each on is in
+	  an ID dir regardless!)
+	  The id files should be replaced by optional mnemonic files!
 
 HISTORY:
 

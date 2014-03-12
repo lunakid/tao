@@ -3,13 +3,21 @@ error_reporting(E_ALL);
 //======================================================================
 define('PRODUCT_NAME', 'Tao');
 define('PRODUCT_UINAME', 'Tao');
-define('PRODUCT_VERSION', '0.287');
+define('PRODUCT_VERSION', '0.29');
 define('MIN_DBVERSION', '0.25');
 ?>
 <?php 
 /*
 TODO:
-	! Deleting an item from the details page should go back to the list!
+	! Deleting an item from the details page should close the details 
+	  page! (Some actions should actually mean something to the tool, 
+	  or these side-effects should be triggered by the app config?)
+
+	! Dblclk-open does not mark the item as being "in focus".
+
+	! Some items have an id attr. file, some don't... (Each on is in
+	  an ID dir regardless!)
+	  The id files should be replaced by optional mnemonic files!
 
 HISTORY:
 
@@ -94,7 +102,6 @@ HISTORY:
 		   IE6, the most recently added item is missing from the list.
 		   for a couple of seconds (minutes)?
 		   OTOH, Mozilla does this right.
-  		
 
   0.282a
   
@@ -164,9 +171,9 @@ class ODB {
 
 		$this->db_root = $db_root;
 		
-		$this->dbversion = trim(file_get_contents($this->db_root.FLEXMAN_DBVERSION_FILE));
+		$this->dbversion = load_file($this->db_root.FLEXMAN_DBVERSION_FILE);
 		if (is_file($this->db_root.'.title'))
-			$this->title = trim(file_get_contents($this->db_root.'.title'));
+			$this->title = load_file($this->db_root.'.title');
 		if (!$this->title)
 			$this->title = "[UNTITLED]";
 	}
@@ -225,7 +232,7 @@ class ODB_Obj {
 
 	function cache_fetch_attr($name) {
 		$dbslot = $this->dbid . '/' . $name;
-		$value = @file_get_contents($dbslot);
+		$value = load_file($dbslot);
 		if ($value === FALSE) {
 			DBG("'$name' could not be fetched into the cache.");
 			return null;
@@ -256,6 +263,9 @@ class ODB_Obj {
 
 }
 
+?>
+<?php
+
 class Entry extends ODB_Obj {
 	var $id;
 	
@@ -267,7 +277,7 @@ class Entry extends ODB_Obj {
 	//	body
 	//	weblink [optional]
 
-	function Entry($dbid, $id) {
+	function __construct($dbid, $id) {
 		// Base class init...
 		$this->ODB_Obj($dbid);
 		// Local instance init...
@@ -280,7 +290,7 @@ class Entry extends ODB_Obj {
 		}
 	}
 
-	function &load($dbobj, $id, $load_only_these_attrs = null) {
+	static function load($dbobj, $id, $load_only_these_attrs = null) {
 		$o = new Entry($dbobj, $id);
 		if ($load_only_these_attrs) {
 			foreach($load_only_these_attrs as $attrname) {
@@ -432,9 +442,13 @@ function cmp_last_activated ($a, $b) {
 	return $b->get('last_activated') - $a->get('last_activated');
 }		
 
-/*
-Display items of a selected state + handle various operations...
-*/
+?>
+<?php
+
+//
+// Items of a selected state (context) 
+// (Display & various other operations)
+//
 class ChangeSet {
 	var $entries;
 	var $cfg;
@@ -459,7 +473,7 @@ class ChangeSet {
 
 		// Get the iteration (phase) counter...
 		$f = $this->db_root . ITERATION_FILE;
-		$this->iteration = is_readable($f) ? trim(file_get_contents($f)) : '';
+		$this->iteration = load_file($f);
 		
 		// Get the list of custom contexts...
 		// Also build a map of context labels and internal context names.
@@ -468,13 +482,17 @@ class ChangeSet {
 		$this->user_contexts = array();
 		while (false !== ($direntry = $d->read())) {
 			// Get Context name...
-			if ($direntry{0} == '.') continue;
+			if ($direntry{0} == '.') {
+				if ($direntry == '.ALL') {
+					 // add as a virtual item (will be handled accordingly later!)
+				}
+				else continue;
+			}
 			$ctx_name = $direntry;
 			array_push($this->user_contexts, $ctx_name);
 
 			// Get Context label...
-			$ctx_label = trim(file_get_contents($contexts_dir
-				.'/'.$ctx_name.'/.label'));
+			$ctx_label = load_file("$contexts_dir/$ctx_name/.label");
 			if (!$ctx_label) {
 				$ctx_label = $ctx_name;
 			}
@@ -486,11 +504,15 @@ class ChangeSet {
 		$this->select_context($this->cfg['default_context']);
 	}
 
-	function select_context(&$context) {
+	function select_context($context) {
 		if (!$context || $this->current_context == $context)
 			return;
 			
-		//!! DO WE REALLY NEED TO COPY THE context??
+		if ($context{0} == '.') {
+			err ("Virtual context filters not yet supported, sorry!");
+		}
+
+		//!! DO WE REALLY NEED TO STORE context??
 		$this->current_context = $context;
 
 		$this->current_dir = $this->db_root 
@@ -506,7 +528,7 @@ class ChangeSet {
 			while (false !== ($direntry = $d->read())) {
 				if ($direntry{0} == '.') continue;
 				$action = $direntry;
-				$target_state = &file_get_contents($targets_dir.'/'.$direntry);
+				$target_state = load_file("$targets_dir/$direntry");
 				//!!check...
 				$this->allowed_actions[$action] = $target_state;
 			}
@@ -528,8 +550,6 @@ class ChangeSet {
 			if ($direntry{0} == '.' || $direntry == $scriptfile)
 				continue;
 
-//!!??			$direntry;
-
 			array_push($this->entries, 
 				Entry::load($this->current_dir .'/'. $direntry,
 						$direntry));
@@ -546,7 +566,7 @@ class ChangeSet {
 
 	function get_next_id() {
 		$nextidfile = $this->db_root . NEXTID_FILE;
-		$nextid = &file_get_contents($nextidfile);
+		$nextid = load_file($nextidfile);
 		return $nextid ? $nextid : 1;
 	}
 
@@ -667,6 +687,8 @@ class ChangeSet {
 		if (-1 != ($i = $this->index_of($id))) {
 			p("<h4>Details of #$id:</h4>");
 			$this->entries[$i]->show_all($this);
+
+			details_page_show_close();
 		
 			$this->focus_on($id);
 		} else {
@@ -727,7 +749,7 @@ class ChangeSet {
 	function show_title() {
 		$title = '';
 		if (is_file($this->current_dir .'/' . '.title'))
-			$title = file_get_contents($this->current_dir . '/' . '.title');
+			$title = load_file("$this->current_dir/.title");
 		if (!$title) {
 			$title = ''.
 				$this->ctxlabel_from_name[$this->current_context]
@@ -737,8 +759,7 @@ class ChangeSet {
 	}
 
 	function show() {
-
-		// Show the list...
+		// Show the items belonging to the current context...
 		$cnt = count($this->entries);
 		for ($i = 0; $i < $cnt; ++$i) {
 			$selected = ($this->entries[$i]->id == $this->focused_id);
@@ -750,6 +771,7 @@ class ChangeSet {
 		p('<div class="toolbar">');
 		$this->show_new('TOOLBAR');
 		$this->show_ctx_selector('TOOLBAR');
+		$this->show_export('text', 'TOOLBAR');
 		p('</div>');
 	}
 
@@ -799,8 +821,15 @@ class ChangeSet {
 				'</option>');
 		}
 		p('</select>');
-
 		p('</form>');
+	}
+
+	function show_export($type, $mode = '') {
+		$css_class = ($mode == 'TOOLBAR' ? 'toolbar-mode' : '');
+		p("\n<form name=\"export\" class=\"$css_class\" action=\"\" method=\"get\">
+			 <input type=\"hidden\" name=\"cmd\" value=\"Export\">
+			 <input type=\"hidden\" name=\"as\" value=\"text\">
+			 <input type=\"submit\" value=\"as text\"></form>");
 	}
 	
 	function nextpage_url($urltail = '', $anchor = '') {
@@ -816,154 +845,44 @@ class ChangeSet {
 	
 }
 
+?>
+<?php
 
-//======================================================================
-function p($str) {
-	global $output;
-	$output .= $str;
-}
+class Exporter {
+	
+	var $list;
+	var $items;
+//!!	var $contexts;
 
-function print_list_page($list, &$output) {
-	global $style;
-	print <<<__END
-<!DOCTYPE html>
-<html><head>
-<!--link rel="stylesheet" type="text/css" href="style.css" /-->
-<style>$style</style>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<!-- EMBEDDED NOW (see page bottom): script type="text/javascript" src="jquery.formobserver-sz.js"></script -->
-<script language="JavaScript" type="text/javascript"><!--
-function mysubmit(form, subm_name, subm_val)
-{
-	var e = document.createElement('input');
-		e.type="hidden";
-		e.name=subm_name;
-		e.value=subm_val;
-	form.appendChild(e);
-	form.submit();
-}
---></script> 
-</head><body>
-__END;
-	print($output);
-	print_banner();
-	print <<<__END
-<script>
-$(document).on( "dblclick", "table.entry", function() {
-	var id = $(this).data("id")
-	url = "?page=entry&cmd=Open&id=" + id.toString() + "&context=$list->current_context"
-	window.open(url, '_blank')
-});
-</script>
-__END;
-	print('</body></html>');
-}
+	function __construct($list) {
+		$this->list = $list;
+		$this->items = $list->entries;
+	}
 
+	function text($flags = 0) {
 
-function print_entry_page($context, &$output) {
-	global $style;
-	print <<<__END
-<!DOCTYPE html>
-<html><head>
-<!--link rel="stylesheet" type="text/css" href="style.css" /-->
-<style>$style</style>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script type="text/javascript" src="jquery.formobserver.js"></script>
-<script language="JavaScript" type="text/javascript"><!--
-function mysubmit(form, subm_name, subm_val)
-{
-	var e = document.createElement('input');
-		e.type="hidden";
-		e.name=subm_name;
-		e.value=subm_val;
-	form.appendChild(e);
-	form.submit();
-}
+		$out = $this->list->ctxlabel_from_name[$this->list->current_context]
+			. "\n";
 
---></script> 
-</head><body>
-__END;
-	print($output);
-	print_banner();
-	print <<<__END
-<script>
-$('form.entry').submit(function(){
-	$(this).FormObserve_save(); // http://code.google.com/p/jquery-form-observe/
-});
-</script>
-__END;
-	print('</body></html>');
-}
+		$cnt = count($this->items);
+		for ($i = 0; $i < $cnt; ++$i) {
+			$e = $this->items[$i];
 
-function print_banner() {
-	global $app;
-	print('<p style="text-align:right;"><i><small>('.PRODUCT_UINAME .' '. PRODUCT_VERSION);
-	print(", DB version: ".$app['db']->dbversion.")</small></i>");
-}
+			$out .= "[" . $e->id . "]\t"; // NOT: $e->get('id')
+			$out .= $e->get('subject');
+			$out .= "\n";
+		}	
 
-function details_page_show_close() {
-	p('<p><input type="button" value="Close" onClick="window.close()"></p>');
-	p('<script>');
-	p('$(document).keydown(function(e) { if (e.keyCode == 27) window.close() });');
-	p('$(document).ready(  function()  { $("form.entry").FormObserve() });');
-	p('</script>');
-
-}
-
-//---------------------------------------------------------------------
-// Should use file_put_contents() now:
-function my_write_file($fname, &$bindata) {
-	$f = @fopen($fname, 'w+b');
-	if ($f) {
-		fwrite($f, $bindata);
-		fclose($f);
-		return true;	//!! *cough*...
-	} else {
-		DBG("my_write_file: failed to write '$fname'");
-		return false;
+		return $out;
 	}
 }
-
-/*
-function &my_read_file($fname, $return_error = false) {
-	$f = @fopen($fname, 'rb');
-	if ($f) {
-		$bindata = &fread($f, filesize($fname));
-		fclose($f);
-		return unmagicquotes($bindata);//!! THIS IS A BUG HERE, POSSIBLY!!
-	} else {
-		DBG("my_read_file: failed to read '$fname'");
-		return $return_error ? '?my_read_file ERROR?' : false;
-	} 
-}
-*/
-
-// canonical date+time
-function timestamp() {
-	return date('Y-m-d H.i.s');
-}
-
-function unmagicquotes(&$str) {
-	if (get_magic_quotes_gpc())
-		return stripslashes($str);
-	else
-		return $str;
-}
-
-function err($msg) {
-	echo "<div class='error-message'>$msg</div>";
-}
-
-function DBG($msg, $force_output = false) {
-	if (defined('DEBUG') || $force_output) {
-		echo 'DEBUG: ' . $msg . '<br>';
-	}
-}
-
 ?>
 <?php
 //======================================================================
 $style = <<<__END
+* {
+	font-family: Arial;
+}
 body {
 	font-size: 10pt;
 	margin: 1em 3em;
@@ -1071,6 +990,15 @@ form[name=add_new].toolbar-mode {
 }
 form[name=context_filter] {
 }
+form[name=export] {
+}
+div.error-message {
+	background: #fff0f0;
+	border: 1px solid #c00000;
+	padding: 4px;
+}
+
+/*Put a CR/LF below here to avoid breaking the build!*/
 __END;
 ?>
 <?php
@@ -1134,8 +1062,8 @@ function main() {
 		$subject = trim(unmagicquotes($subject));
 	$priority = isset($_POST['priority']) ? $_POST['priority'] : '';
 		$priority = trim($priority);
-	$context = isset($_POST['context']) ? $_POST['context'] 
-			: (isset($_GET['context']) ? $_GET['context'] : '');
+	$_SESSION['context'] = isset($_POST['context']) ? $_POST['context'] 
+			: (isset($_GET['context']) ? $_GET['context'] : $_SESSION['context']);
 	$weblink = isset($_POST['weblink']) ? $_POST['weblink'] 
 			: (isset($_GET['weblink']) ? $_GET['weblink'] : '');
 
@@ -1147,7 +1075,7 @@ function main() {
 /*
 echo "id: $id <br>";
 echo "cmd: $cmd <br>";
-echo "ctx: $context <br>";
+echo "ctx: $_SESSION[context] <br>";
 echo "new state: ".$_POST['statechg']." <br>";
 */
 
@@ -1155,7 +1083,7 @@ echo "new state: ".$_POST['statechg']." <br>";
 	$chgset_cfg['db'] = $db;
 	$list = new ChangeSet($chgset_cfg);
 
-	$list->select_context($context); // (empty context --> NOOP)
+	$list->select_context($_SESSION['context']); // (empty context --> NOOP)
 	$list->focus_on($focused_id);    // (empty id --> NOOP)
 	
 	if ($cmd) switch ($cmd) {
@@ -1205,6 +1133,10 @@ echo "new state: ".$_POST['statechg']." <br>";
 			// See switch($page) below...
 			break;
 	
+		case 'Export':
+			$page = "export";
+			break;
+
 		default:
 			err ("Command '$cmd' is NOT implemented!");
 	}
@@ -1217,13 +1149,8 @@ echo "new state: ".$_POST['statechg']." <br>";
 	switch ($page) {
 	
 		case 'entry':
-//echo "time:" . time();
 			$list->show_entry_details($id);
-			p('<hr>');
-			details_page_show_close();
-
-			print_entry_page($list->current_context, $output);
-
+			print_entry_page($output);
 			break;
 	
 		case 'weblink':
@@ -1231,6 +1158,15 @@ echo "new state: ".$_POST['statechg']." <br>";
 			//header("Location: $weblink"); // This doesn't redirect for some reason (no headers sent yet!) :-o
 			echo "<script> location='$weblink' </script>";
 			exit(0);
+
+		case 'export':
+			$export = new Exporter($list);
+//			if (isset($_GET['as'])) switch ($_GET['as']) {
+//			case 'text':
+				echo '<pre>',$export->text(),'</pre>';
+				break;
+//			}
+			break;
 		
 		default: // Show the issue list by default
 
@@ -1251,7 +1187,166 @@ echo "new state: ".$_POST['statechg']." <br>";
 	}
 }
 
+
+//
+// Page templates...
+//
+function print_list_page($list, &$output) {
+	global $style;
+	print <<<__END
+<!DOCTYPE html>
+<html><head>
+<!--link rel="stylesheet" type="text/css" href="style.css" /-->
+<style>$style</style>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<!-- EMBEDDED NOW (see page bottom): script type="text/javascript" src="jquery.formobserver-sz.js"></script -->
+<script language="JavaScript" type="text/javascript"><!--
+function mysubmit(form, subm_name, subm_val)
+{
+	var e = document.createElement('input');
+		e.type="hidden";
+		e.name=subm_name;
+		e.value=subm_val;
+	form.appendChild(e);
+	form.submit();
+}
+--></script> 
+</head><body>
+__END;
+	print($output);
+	print_banner();
+	print <<<__END
+<script>
+$(document).on( "dblclick", "table.entry", function() {
+	var id = $(this).data("id")
+	url = "?page=entry&cmd=Open&id=" + id.toString() + "&context=$list->current_context"
+	window.open(url, '_blank')
+});
+</script>
+__END;
+	print('</body></html>');
+}
+
+
+function print_entry_page(&$output) {
+	global $style;
+	print <<<__END
+<!DOCTYPE html>
+<html><head>
+<!--link rel="stylesheet" type="text/css" href="style.css" /-->
+<style>$style</style>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript" src="jquery.formobserver.js"></script>
+<script language="JavaScript" type="text/javascript"><!--
+function mysubmit(form, subm_name, subm_val)
+{
+	var e = document.createElement('input');
+		e.type="hidden";
+		e.name=subm_name;
+		e.value=subm_val;
+	form.appendChild(e);
+	form.submit();
+}
+
+--></script> 
+</head><body>
+__END;
+	print($output);
+	print_banner();
+	print <<<__END
+<script>
+$('form.entry').submit(function(){
+	$(this).FormObserve_save(); // http://code.google.com/p/jquery-form-observe/
+});
+</script>
+__END;
+	print('</body></html>');
+}
+
+function details_page_show_close() {
+	p('<hr><input type="button" value="Close" onClick="window.close()"></p>');
+	p('<script>');
+	p('$(document).keydown(function(e) { if (e.keyCode == 27) window.close() });');
+	p('$(document).ready(  function()  { $("form.entry").FormObserve() });');
+	p('</script>');
+
+}
+
+function print_banner() {
+	global $app;
+	print('<p style="text-align:right;"><i><small>('.PRODUCT_UINAME .' '. PRODUCT_VERSION);
+	print(", DB version: ".$app['db']->dbversion.")</small></i>");
+}
+
+
+//--------------------------
 main();
+
+?>
+<?php
+
+//======================================================================
+function p($str) {
+	global $output;
+	$output .= $str;
+}
+
+//---------------------------------------------------------------------
+// Should use file_put_contents() now:
+function my_write_file($fname, &$bindata) {
+	$f = @fopen($fname, 'w+b');
+	if ($f) {
+		fwrite($f, $bindata);
+		fclose($f);
+		return true;	//!! *cough*...
+	} else {
+		DBG("my_write_file: failed to write '$fname'");
+		return false;
+	}
+}
+
+function load_file($file, $default = '') {
+	return (is_file($file)
+		? trim(file_get_contents($file))
+		: $default
+	);
+}
+
+/*
+function &my_read_file($fname, $return_error = false) {
+	$f = @fopen($fname, 'rb');
+	if ($f) {
+		$bindata = &fread($f, filesize($fname));
+		fclose($f);
+		return unmagicquotes($bindata);//!! THIS IS A BUG HERE, POSSIBLY!!
+	} else {
+		DBG("my_read_file: failed to read '$fname'");
+		return $return_error ? '?my_read_file ERROR?' : false;
+	} 
+}
+*/
+
+// canonical date+time
+function timestamp() {
+	return date('Y-m-d H.i.s');
+}
+
+function unmagicquotes(&$str) {
+	if (get_magic_quotes_gpc())
+		return stripslashes($str);
+	else
+		return $str;
+}
+
+function err($msg) {
+	echo "<div class='error-message'>$msg</div>";
+}
+
+function DBG($msg, $force_output = false) {
+	if (defined('DEBUG') || $force_output) {
+		echo 'DEBUG: ' . $msg . '<br>';
+	}
+}
 
 ?>
 <script>

@@ -59,8 +59,8 @@ function main() {
 		$subject = trim(unmagicquotes($subject));
 	$priority = isset($_POST['priority']) ? $_POST['priority'] : '';
 		$priority = trim($priority);
-	$context = isset($_POST['context']) ? $_POST['context'] 
-			: (isset($_GET['context']) ? $_GET['context'] : '');
+	$_SESSION['context'] = isset($_POST['context']) ? $_POST['context'] 
+			: (isset($_GET['context']) ? $_GET['context'] : $_SESSION['context']);
 	$weblink = isset($_POST['weblink']) ? $_POST['weblink'] 
 			: (isset($_GET['weblink']) ? $_GET['weblink'] : '');
 
@@ -72,7 +72,7 @@ function main() {
 /*
 echo "id: $id <br>";
 echo "cmd: $cmd <br>";
-echo "ctx: $context <br>";
+echo "ctx: $_SESSION[context] <br>";
 echo "new state: ".$_POST['statechg']." <br>";
 */
 
@@ -80,7 +80,7 @@ echo "new state: ".$_POST['statechg']." <br>";
 	$chgset_cfg['db'] = $db;
 	$list = new ChangeSet($chgset_cfg);
 
-	$list->select_context($context); // (empty context --> NOOP)
+	$list->select_context($_SESSION['context']); // (empty context --> NOOP)
 	$list->focus_on($focused_id);    // (empty id --> NOOP)
 	
 	if ($cmd) switch ($cmd) {
@@ -130,6 +130,10 @@ echo "new state: ".$_POST['statechg']." <br>";
 			// See switch($page) below...
 			break;
 	
+		case 'Export':
+			$page = "export";
+			break;
+
 		default:
 			err ("Command '$cmd' is NOT implemented!");
 	}
@@ -142,13 +146,8 @@ echo "new state: ".$_POST['statechg']." <br>";
 	switch ($page) {
 	
 		case 'entry':
-//echo "time:" . time();
 			$list->show_entry_details($id);
-			p('<hr>');
-			details_page_show_close();
-
-			print_entry_page($list->current_context, $output);
-
+			print_entry_page($output);
 			break;
 	
 		case 'weblink':
@@ -156,6 +155,15 @@ echo "new state: ".$_POST['statechg']." <br>";
 			//header("Location: $weblink"); // This doesn't redirect for some reason (no headers sent yet!) :-o
 			echo "<script> location='$weblink' </script>";
 			exit(0);
+
+		case 'export':
+			$export = new Exporter($list);
+//			if (isset($_GET['as'])) switch ($_GET['as']) {
+//			case 'text':
+				echo '<pre>',$export->text(),'</pre>';
+				break;
+//			}
+			break;
 		
 		default: // Show the issue list by default
 
@@ -176,6 +184,99 @@ echo "new state: ".$_POST['statechg']." <br>";
 	}
 }
 
+
+//
+// Page templates...
+//
+function print_list_page($list, &$output) {
+	global $style;
+	print <<<__END
+<!DOCTYPE html>
+<html><head>
+<!--link rel="stylesheet" type="text/css" href="style.css" /-->
+<style>$style</style>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<!-- EMBEDDED NOW (see page bottom): script type="text/javascript" src="jquery.formobserver-sz.js"></script -->
+<script language="JavaScript" type="text/javascript"><!--
+function mysubmit(form, subm_name, subm_val)
+{
+	var e = document.createElement('input');
+		e.type="hidden";
+		e.name=subm_name;
+		e.value=subm_val;
+	form.appendChild(e);
+	form.submit();
+}
+--></script> 
+</head><body>
+__END;
+	print($output);
+	print_banner();
+	print <<<__END
+<script>
+$(document).on( "dblclick", "table.entry", function() {
+	var id = $(this).data("id")
+	url = "?page=entry&cmd=Open&id=" + id.toString() + "&context=$list->current_context"
+	window.open(url, '_blank')
+});
+</script>
+__END;
+	print('</body></html>');
+}
+
+
+function print_entry_page(&$output) {
+	global $style;
+	print <<<__END
+<!DOCTYPE html>
+<html><head>
+<!--link rel="stylesheet" type="text/css" href="style.css" /-->
+<style>$style</style>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript" src="jquery.formobserver.js"></script>
+<script language="JavaScript" type="text/javascript"><!--
+function mysubmit(form, subm_name, subm_val)
+{
+	var e = document.createElement('input');
+		e.type="hidden";
+		e.name=subm_name;
+		e.value=subm_val;
+	form.appendChild(e);
+	form.submit();
+}
+
+--></script> 
+</head><body>
+__END;
+	print($output);
+	print_banner();
+	print <<<__END
+<script>
+$('form.entry').submit(function(){
+	$(this).FormObserve_save(); // http://code.google.com/p/jquery-form-observe/
+});
+</script>
+__END;
+	print('</body></html>');
+}
+
+function details_page_show_close() {
+	p('<hr><input type="button" value="Close" onClick="window.close()"></p>');
+	p('<script>');
+	p('$(document).keydown(function(e) { if (e.keyCode == 27) window.close() });');
+	p('$(document).ready(  function()  { $("form.entry").FormObserve() });');
+	p('</script>');
+
+}
+
+function print_banner() {
+	global $app;
+	print('<p style="text-align:right;"><i><small>('.PRODUCT_UINAME .' '. PRODUCT_VERSION);
+	print(", DB version: ".$app['db']->dbversion.")</small></i>");
+}
+
+
+//--------------------------
 main();
 
 ?>
